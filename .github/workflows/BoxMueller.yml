@@ -1,0 +1,53 @@
+name: Box-Mueller
+on: push
+
+jobs:
+  job1:
+    name: run-Box-Mueller
+    runs-on: ubuntu-latest
+    env:
+      GKSwstype: "100"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: "1.8.1"
+      - uses: julia-actions/julia-buildpkg@v1
+      - name: Run Box-Mueller
+        run: julia --project src/Box-Mueller/box_mueller.jl
+      - uses: actions/upload-artifact@v3
+        with:
+          name: X1-plot
+          path: X1.png
+      - uses: actions/upload-artifact@v3
+        with:
+          name: X2-plot
+          path: X2.png
+      - uses: actions/upload-artifact@v3
+        with:
+          name: X1X2-plot
+          path: X1X2.png
+  job2:
+    name: comment-plot
+    needs: job1
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/iterative/cml:0-dvc2-base1
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: X1-plot
+      - uses: actions/download-artifact@v3
+        with:
+          name: X2-plot
+      - uses: actions/download-artifact@v3
+        with:
+          name: X1X2-plot
+      - name: Add plot to comment
+        env:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cml-publish X1.png --md >> report.md
+          cml-publish X2.png --md >> report.md
+          cml-publish X1X2.png --md >> report.md
+          cml-send-comment report.md

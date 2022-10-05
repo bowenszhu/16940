@@ -1,0 +1,7 @@
+name = "MIT16940"
+uuid = "7b1a8d63-b69c-4756-8d8a-6a338d3e29c8"
+authors = ["bowenszhu <bszhu@fas.harvard.edu>"]
+version = "0.1.0"
+
+[compat]
+julia = "1.8.1"

@@ -18,15 +18,15 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: variance-plot
-          path: p1variance.png
+          path: p1variance.svg
       - uses: actions/upload-artifact@v3
         with:
           name: skewness-plot
-          path: p1skewness.png
+          path: p1skewness.svg
       - uses: actions/upload-artifact@v3
         with:
           name: kurtosis-plot
-          path: p1kurtosis.png
+          path: p1kurtosis.svg
   job2:
     name: comment-plot
     needs: job1
@@ -47,8 +47,8 @@ jobs:
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cml-publish p1variance.png --md >> report.md
-          cml-publish p1skewness.png --md >> report.md
-          cml-publish p1kurtosis.png --md >> report.md
+          cml-publish p1variance.svg --md >> report.md
+          cml-publish p1skewness.svg --md >> report.md
+          cml-publish p1kurtosis.svg --md >> report.md
           cml-send-comment report.md
             

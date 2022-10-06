@@ -85,5 +85,6 @@ function var_combo(t::Integer)
 end
 
 var_Îᵗ_combo = map(var_combo, t)
-plot!(t, var_Îᵗ_combo, label = L"\hat I^t_\mathrm{combo}", markershape = :circle)
+plot!(t, var_Îᵗ_combo, label = L"\hat I^t_\mathrm{combo}",
+      markershape = :circle)
 savefig("p2d.svg")

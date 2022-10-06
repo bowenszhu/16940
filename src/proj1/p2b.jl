@@ -25,5 +25,6 @@ open("p2b.txt", "w") do io
     write(io, "var(Îᵗᵢₛ) = $var_Îᵗᵢₛ\n")
 end
 
-histogram(Îᵗᵢₛ, legend = false, xlabel = L"\hat I^t_\mathrm{IS}", title = L"t = %$t")
+histogram(Îᵗᵢₛ, legend = false, xlabel = L"\hat I^t_\mathrm{IS}",
+          title = L"t = %$t")
 savefig("p2b_I.svg")

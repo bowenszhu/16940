@@ -1,4 +1,4 @@
-name: proj1-p2c
+name: proj1-p2cd
 on: push
 
 jobs:
@@ -13,12 +13,16 @@ jobs:
         with:
           version: '1.8.2'
       - uses: julia-actions/julia-buildpkg@v1
-      - name: Run proj1 p2c
-        run: julia --project src/proj1/p2c.jl
+      - name: Run
+        run: julia --project src/proj1/p2cd.jl
       - uses: actions/upload-artifact@v3
         with:
           name: p2c-plot
           path: p2c.svg
+      - uses: actions/upload-artifact@v3
+        with:
+          name: p2d-plot
+          path: p2d.svg
   job2:
     name: comment-plot
     needs: job1
@@ -29,10 +33,14 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: p2c-plot
+      - uses: actions/download-artifact@v3
+        with:
+          name: p2d-plot
       - name: Add plot to comment
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo proj1 p2c >> report.md
+          echo proj1 p2cd >> report.md
           cml-publish p2c.svg --md >> report.md
+          cml-publish p2d.svg --md >> report.md
           cml-send-comment report.md

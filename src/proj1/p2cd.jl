@@ -2,7 +2,7 @@ using Random, Statistics, Plots, LaTeXStrings
 
 g(x) = exp(-x^2 / 2) / sqrt(2π)
 πᵗ(x) = exp(-x^2 / 2) * (sin(6x)^2 + 3cos(x)^2 * sin(4x)^2 + 1)
-w̃(x) = sqrt(2π) * (sin(6x)^2 + 3cos(x)^2 * sin(4x)^2 + 1)
+w̃(x) = πᵗ(x) / g(x)
 h = abs2
 C = 5sqrt(2π)
 trial = 10_000
@@ -49,3 +49,41 @@ plot(t, var_Îⁿ⁽ᵗ⁾ₐᵣ, xlabel = L"t", ylabel = L"\mathrm{Var}", axis
      label = L"\hat I^{n(t)}_\mathrm{AR}", markershape = :circle)
 plot!(t, var_Îᵗᵢₛ, label = L"\hat I^t_\mathrm{IS}", markershape = :circle)
 savefig("p2c.svg")
+
+g̃ᵣₑⱼ(x) = C * g(x) - πᵗ(x)
+w̃ᵣₑⱼ(x) = πᵗ(x) / g̃ᵣₑⱼ(x)
+
+function combo(t::Integer)
+    ₙÎⁿ⁽ᵗ⁾ₐᵣ = Vector{Float64}(undef, trial)
+    ₜ₋ₙÎᵗ⁻ⁿᵣₑⱼ = similar(Îⁿ⁽ᵗ⁾ₐᵣ)
+    y = Vector{Float64}(undef, t)
+    uCgy = similar(y)
+    u = similar(y)
+    πy = u # reuse memory
+    accept = similar(y, Bool)
+    for i in 1:trial
+        randn!(y) # y ~ g
+        map!(πᵗ, πy, y) # π(y)
+        map!(g, uCgy, y) # g(y)
+        rand!(u) # u ~ U(0, 1)
+        @. uCgy *= u * C # u * C * g(y)
+        map!(<, accept, uCgy, πy) # u * C * g(y) < π(y)
+        n = sum(accept)
+        ₙÎⁿ⁽ᵗ⁾ₐᵣ[i] = mean(h, y[accept]) * n
+        x = y[.!accept] # x ~ C * g - πᵗ
+        w̃x = map(w̃ᵣₑⱼ, x) # w̃(x)
+        hxw̃x = map(h, x) # h(x)
+        hxw̃x .*= w̃x # h(x)w̃(x)
+        ₜ₋ₙÎᵗ⁻ⁿᵣₑⱼ[i] = (sum(hxw̃x) / sum(w̃x)) * (t - n)
+    end
+    (ₙÎⁿ⁽ᵗ⁾ₐᵣ + ₜ₋ₙÎᵗ⁻ⁿᵣₑⱼ) / t
+end
+
+function var_combo(t::Integer)
+    Îᵗ_combo = combo(t)
+    var(Îᵗ_combo)
+end
+
+var_Îᵗ_combo = map(var_combo, t)
+plot!(t, var_Îᵗ_combo, label = L"\hat I^t_\mathrm{combo}", markershape = :circle)
+savefig("p2d.svg")

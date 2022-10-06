@@ -2,7 +2,7 @@ using Random, Statistics, Plots, LaTeXStrings
 
 g(x) = exp(-x^2 / 2) / sqrt(2π)
 πᵗ(x) = exp(-x^2 / 2) * (sin(6x)^2 + 3cos(x)^2 * sin(4x)^2 + 1)
-w̃(x) = sqrt(2π) * (sin(6x)^2 + 3cos(x)^2 * sin(4x)^2 + 1)
+w̃(x) = πᵗ(x) / g(x)
 h = abs2
 
 t = 100_000

@@ -81,7 +81,7 @@ end
 
 function var_combo(t::Integer)
     Îᵗ_combo = combo(t)
-    var(Îᵗ_combo)
+    var(Îᵗ_combo) * trial
 end
 
 var_Îᵗ_combo = map(var_combo, t)

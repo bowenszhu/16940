@@ -47,6 +47,7 @@ jobs:
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo proj1 p1 >> report.md
           cml-publish p1variance.svg --md >> report.md
           cml-publish p1skewness.svg --md >> report.md
           cml-publish p1kurtosis.svg --md >> report.md

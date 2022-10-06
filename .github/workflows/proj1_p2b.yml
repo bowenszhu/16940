@@ -1,4 +1,4 @@
-name: proj1-p1
+name: proj1-p2b
 on: push
 
 jobs:
@@ -13,20 +13,16 @@ jobs:
         with:
           version: '1.8.2'
       - uses: julia-actions/julia-buildpkg@v1
-      - name: Run proj1 p1
-        run: julia --project src/proj1/p1.jl
+      - name: Run proj1 p2b
+        run: julia --project src/proj1/p2b.jl
       - uses: actions/upload-artifact@v3
         with:
-          name: variance-plot
-          path: p1variance.svg
+          name: p2b-txt
+          path: p2b.txt
       - uses: actions/upload-artifact@v3
         with:
-          name: skewness-plot
-          path: p1skewness.svg
-      - uses: actions/upload-artifact@v3
-        with:
-          name: kurtosis-plot
-          path: p1kurtosis.svg
+          name: p2b_I-plot
+          path: p2b_I.svg
   job2:
     name: comment-plot
     needs: job1
@@ -36,19 +32,15 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
-          name: variance-plot
+          name: p2b-txt
       - uses: actions/download-artifact@v3
         with:
-          name: skewness-plot
-      - uses: actions/download-artifact@v3
-        with:
-          name: kurtosis-plot
+          name: p2b_I-plot
       - name: Add plot to comment
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo proj1 p1 >> report.md
-          cml-publish p1variance.svg --md >> report.md
-          cml-publish p1skewness.svg --md >> report.md
-          cml-publish p1kurtosis.svg --md >> report.md
+          echo proj1 p2b >> report.md
+          cat p2b.txt >> report.md
+          cml-publish p2b_I.svg --md >> report.md
           cml-send-comment report.md

@@ -47,9 +47,8 @@ jobs:
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo proj1 p1 >> report.md
+          echo proj1 p2a >> report.md
           cat p2a.txt >> report.md
           cml-publish p2a_n.svg --md >> report.md
           cml-publish p2a_I.svg --md >> report.md
           cml-send-comment report.md
-            

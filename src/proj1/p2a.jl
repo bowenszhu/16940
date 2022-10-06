@@ -2,6 +2,7 @@ using Random, Statistics, Plots, LaTeXStrings
 
 g(x) = exp(-x^2 / 2) / sqrt(2π)
 πᵗ(x) = exp(-x^2 / 2) * (sin(6x)^2 + 3cos(x)^2 * sin(4x)^2 + 1)
+h = abs2
 C = 5sqrt(2π)
 
 n_target = 100_000
@@ -26,12 +27,12 @@ write(io, "t = $t\n")
 t = 100_000
 trial = 10_000
 n = Vector{Int}(undef, trial)
-Iⁿ⁽ᵗ⁾ = similar(n, Float64)
+Îⁿ⁽ᵗ⁾ₐᵣ = similar(n, Float64)
 y = Vector{Float64}(undef, t)
 uCgy = similar(y)
 u = similar(y)
 πy = u # reuse memory
-accept = similar(uCgy, Bool)
+accept = similar(y, Bool)
 for i in 1:trial
     randn!(y) # y ~ g
     map!(πᵗ, πy, y) # π(y)
@@ -40,14 +41,15 @@ for i in 1:trial
     @. uCgy *= u * C # u * C * g(y)
     map!(<, accept, uCgy, πy) # u * C * g(y) < π(y)
     n[i] = sum(accept)
-    Iⁿ⁽ᵗ⁾[i] = mean(abs2, y[accept])
+    Îⁿ⁽ᵗ⁾ₐᵣ[i] = mean(h, y[accept])
 end
-var_Iⁿ⁽ᵗ⁾ = var(Iⁿ⁽ᵗ⁾)
-println("var(Iⁿ⁽ᵗ⁾) = ", var_Iⁿ⁽ᵗ⁾)
-write(io, "var(Iⁿ⁽ᵗ⁾) = $var_Iⁿ⁽ᵗ⁾\n")
+var_Îⁿ⁽ᵗ⁾ₐᵣ = var(Îⁿ⁽ᵗ⁾ₐᵣ)
+println("var(Îⁿ⁽ᵗ⁾ₐᵣ) = ", var_Îⁿ⁽ᵗ⁾ₐᵣ)
+write(io, "var(Îⁿ⁽ᵗ⁾ₐᵣ) = $var_Îⁿ⁽ᵗ⁾ₐᵣ\n")
 close(io)
 
 histogram(n, legend = false, xlabel = L"n", title = L"t = %$t")
 savefig("p2a_n.svg")
-histogram(Iⁿ⁽ᵗ⁾, legend = false, xlabel = L"\hat I^{n(t)}_\mathrm{AR}", title = L"t = %$t")
+histogram(Îⁿ⁽ᵗ⁾ₐᵣ, legend = false, xlabel = L"\hat I^{n(t)}_\mathrm{AR}",
+          title = L"t = %$t")
 savefig("p2a_I.svg")

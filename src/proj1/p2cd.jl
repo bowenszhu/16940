@@ -55,7 +55,7 @@ w̃ᵣₑⱼ(x) = πᵗ(x) / g̃ᵣₑⱼ(x)
 
 function combo(t::Integer)
     ₙÎⁿ⁽ᵗ⁾ₐᵣ = Vector{Float64}(undef, trial)
-    ₜ₋ₙÎᵗ⁻ⁿᵣₑⱼ = similar(Îⁿ⁽ᵗ⁾ₐᵣ)
+    ₜ₋ₙÎᵗ⁻ⁿᵣₑⱼ = similar(ₙÎⁿ⁽ᵗ⁾ₐᵣ)
     y = Vector{Float64}(undef, t)
     uCgy = similar(y)
     u = similar(y)

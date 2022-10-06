@@ -18,7 +18,7 @@ for i in 1:trial
     hxw̃x .*= w̃x # h(x)w̃(x)
     Îᵗᵢₛ[i] = sum(hxw̃x) / sum(w̃x)
 end
-var_Îᵗᵢₛ = var(Îᵗᵢₛ)
+var_Îᵗᵢₛ = var(Îᵗᵢₛ) * trial
 println("var(Îᵗᵢₛ) = ", var_Îᵗᵢₛ)
 
 open("p2b.txt", "w") do io

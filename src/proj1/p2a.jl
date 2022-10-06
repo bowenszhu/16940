@@ -43,7 +43,7 @@ for i in 1:trial
     n[i] = sum(accept)
     Îⁿ⁽ᵗ⁾ₐᵣ[i] = mean(h, y[accept])
 end
-var_Îⁿ⁽ᵗ⁾ₐᵣ = var(Îⁿ⁽ᵗ⁾ₐᵣ)
+var_Îⁿ⁽ᵗ⁾ₐᵣ = var(Îⁿ⁽ᵗ⁾ₐᵣ) * trial
 println("var(Îⁿ⁽ᵗ⁾ₐᵣ) = ", var_Îⁿ⁽ᵗ⁾ₐᵣ)
 write(io, "var(Îⁿ⁽ᵗ⁾ₐᵣ) = $var_Îⁿ⁽ᵗ⁾ₐᵣ\n")
 close(io)

@@ -23,7 +23,7 @@ function var_AR(t::Integer)
         map!(<, accept, uCgy, πy) # u * C * g(y) < π(y)
         Îⁿ⁽ᵗ⁾ₐᵣ[i] = mean(h, y[accept])
     end
-    var(Îⁿ⁽ᵗ⁾ₐᵣ)
+    var(Îⁿ⁽ᵗ⁾ₐᵣ) * trial
 end
 
 function var_IS(t::Integer)
@@ -38,7 +38,7 @@ function var_IS(t::Integer)
         hxw̃x .*= w̃x # h(x)w̃(x)
         Îᵗᵢₛ[i] = sum(hxw̃x) / sum(w̃x)
     end
-    var(Îᵗᵢₛ)
+    var(Îᵗᵢₛ) * trial
 end
 
 t = 1 .<< (8:15)

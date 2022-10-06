@@ -1,0 +1,55 @@
+name: proj1-p2a
+on: push
+
+jobs:
+  job1:
+    name: run
+    runs-on: ubuntu-latest
+    env:
+      GKSwstype: "100"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: '1.8.2'
+      - uses: julia-actions/julia-buildpkg@v1
+      - name: Run proj1 p2a
+        run: julia --project src/proj1/p2a.jl
+      - uses: actions/upload-artifact@v3
+        with:
+          name: p2a-txt
+          path: p2a.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          name: p2a_n-plot
+          path: p2a_n.svg
+      - uses: actions/upload-artifact@v3
+        with:
+          name: p2a_I-plot
+          path: p2a_I.svg
+  job2:
+    name: comment-plot
+    needs: job1
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/iterative/cml:0-dvc2-base1
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: p2a-txt
+      - uses: actions/download-artifact@v3
+        with:
+          name: p2a_n-plot
+      - uses: actions/download-artifact@v3
+        with:
+          name: p2a_I-plot
+      - name: Add plot to comment
+        env:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo proj1 p1 >> report.md
+          cat p2a.txt >> report.md
+          cml-publish p2a_n.svg --md >> report.md
+          cml-publish p2a_I.svg --md >> report.md
+          cml-send-comment report.md
+            

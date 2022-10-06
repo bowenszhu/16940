@@ -1,0 +1,38 @@
+name: proj1-p2c
+on: push
+
+jobs:
+  job1:
+    name: run
+    runs-on: ubuntu-latest
+    env:
+      GKSwstype: "100"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: '1.8.2'
+      - uses: julia-actions/julia-buildpkg@v1
+      - name: Run proj1 p2c
+        run: julia --project src/proj1/p2c.jl
+      - uses: actions/upload-artifact@v3
+        with:
+          name: p2c-plot
+          path: p2c.svg
+  job2:
+    name: comment-plot
+    needs: job1
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/iterative/cml:0-dvc2-base1
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: p2c-plot
+      - name: Add plot to comment
+        env:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo proj1 p2c >> report.md
+          cml-publish p2c.svg --md >> report.md
+          cml-send-comment report.md

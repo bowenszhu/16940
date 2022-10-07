@@ -62,7 +62,7 @@ for i in 1:trial
     uₓ₆[i] = sol(0.6)[1]
 end
 Y_control = FYs * β
-Ym = mean(Y)
+Ym = mean(Y_control)
 c = -cov(uₓ₆, Y_control) / varm(Y_control, Ym)
 Z = Y_control
 @. Z = uₓ₆ + c * (Y_control - Ym)

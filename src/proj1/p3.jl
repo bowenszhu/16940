@@ -99,7 +99,7 @@ plot(ns, reps, legend = false, xlabel = L"n", ylabel = L"\sqrt n\hat\sigma_n/p",
      xaxis = :log)
 savefig("p3_3a_reps.svg")
 open("p32.txt", "w") do io
-    write(io, "3.3 n $n\n")
+    write(io, "3.3 n $ns\n")
     write(io, "3.3 standard deviation $sd\n")
     write(io, "3.3 relative error per sample $reps\n")
 end

@@ -92,9 +92,11 @@ for (i, n) in enumerate(ns)
     sd[i] = s
     reps[i] = √n * s / p
 end
-plot(ns, sd, legend = false, xlabel = L"n", ylabel = L"\hat\sigma_n")
+plot(ns, sd, legend = false, xlabel = L"n", ylabel = L"\hat\sigma_n",
+     xaxis = :log)
 savefig("p3_3a_sd.svg")
-plot(ns, reps, legend = false, xlabel = L"n", ylabel = L"\sqrt n\hat\sigma_n/p")
+plot(ns, reps, legend = false, xlabel = L"n", ylabel = L"\sqrt n\hat\sigma_n/p",
+     xaxis = :log)
 savefig("p3_3a_reps.svg")
 open("p32.txt", "w") do io
     write(io, "3.3 n $n\n")

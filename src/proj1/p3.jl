@@ -1,5 +1,5 @@
 using ModelingToolkit, MethodOfLines, Distributions, Random,
-      DifferentialEquations, StatsBase, Plots, LaTeXStrings
+      DifferentialEquations, StatsBase, Statistics, Plots, LaTeXStrings
 const μʸ = -1.0
 const σ²ʸ = 1.0
 const σʸ = √σ²ʸ

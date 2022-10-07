@@ -72,3 +72,32 @@ open("p32.txt", "w") do io
     write(io, "varX $varX\n")
     write(io, "varZ $varZ\n")
 end
+
+const u₀ = 40
+rand!(dF, @view FYs[:, 1])
+rand!(dY, @view FYs[:, 2:5])
+ns = 1 .<< (2:6)
+sd = similar(ns, Float64)
+reps = similar(sd)
+uss = Vector{Float64}(undef, ns[end])
+for (i, n) in enumerate(ns)
+    us = @view uss[1:n]
+    for j in 1:n
+        sol = diffusioneqn(FYs[j, 1:5]...)
+        us[i] = sol(0.6)[1]
+    end
+    ps = us .> u₀
+    p = sum(ps)
+    s = std(ps)
+    sd[i] = s
+    reps[i] = √n * s / p
+end
+plot(ns, sd, legend = false, xlabel = L"n", ylabel = L"\hat\sigma_n")
+savefig("p3_3a_sd.svg")
+plot(ns, reps, legend = false, xlabel = L"n", ylabel = L"\sqrt n\hat\sigma_n/p")
+savefig("p3_3a_reps.svg")
+open("p32.txt", "w") do io
+    write(io, "3.3 n $n\n")
+    write(io, "3.3 standard deviation $sd\n")
+    write(io, "3.3 relative error per sample $reps\n")
+end

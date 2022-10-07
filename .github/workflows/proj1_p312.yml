@@ -1,4 +1,4 @@
-name: proj1-p31ab
+name: proj1-p312
 on: push
 
 jobs:
@@ -17,8 +17,8 @@ jobs:
         run: julia --project src/proj1/p3_12.jl
       - uses: actions/upload-artifact@v3
         with:
-          name: p32ab-txt
-          path: p32ab.txt
+          name: p32-txt
+          path: p32.txt
       - uses: actions/upload-artifact@v3
         with:
           name: p32ab-plot
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
-          name: p32ab-txt
+          name: p32-txt
       - uses: actions/download-artifact@v3
         with:
           name: p32ab-plot
@@ -40,7 +40,7 @@ jobs:
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo proj1 p3-12ab >> report.md
-          cat p32ab.txt >> report.md
+          echo proj1 p3-12 >> report.md
+          cat p32.txt >> report.md
           cml-publish p32ab.svg --md >> report.md
           cml-send-comment report.md

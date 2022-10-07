@@ -1,4 +1,5 @@
-using ModelingToolkit, MethodOfLines, Distributions, DifferentialEquations,
+using ModelingToolkit, MethodOfLines, Distributions, Random,
+      DifferentialEquations,
       StatsBase, Plots, LaTeXStrings
 const μʸ = -1.0
 const σ²ʸ = 1.0
@@ -25,22 +26,20 @@ dv = [u(x)]
 N = 10 # number of discretization intervals
 dx = (xₘₐₓ - xₘᵢₙ) / N
 discretization = MOLFiniteDifference([x => dx])
-function diffusioneqn()
-    ps = [
-        F => rand(dF),
-        Y₁ => rand(dY),
-        Y₂ => rand(dY),
-        Y₃ => rand(dY),
-        Y₄ => rand(dY),
-    ]
+function diffusioneqn(F_, Y₁_, Y₂_, Y₃_, Y₄_)
+    ps = [F => F_, Y₁ => Y₁_, Y₂ => Y₂_, Y₃ => Y₃_, Y₄ => Y₄_]
     pdesys = PDESystem(deq, bcs, domain, iv, dv, ps; name = :elliptic)
     prob = discretize(pdesys, discretization)
     solve(prob)
 end
 trial = 100
+FYs = Matrix{Float64}(undef, trial, 6)
+rand!(dF, @view FYs[:, 1])
+rand!(dY, @view FYs[:, 2:5])
+FYs[:, end] .= 1.0
 uₓ₆ = Vector{Float64}(undef, trial)
 for i in 1:trial
-    sol = diffusioneqn()
+    sol = diffusioneqn(FYs[i, 1:5]...)
     uₓ₆[i] = sol(0.6)[1]
 end
 m, se = mean_and_std(uₓ₆)
@@ -48,10 +47,29 @@ m, se = mean_and_std(uₓ₆)
 z = quantile(Normal(), 1 - α / 2)
 zse = z * se
 interval = m - zse, m + zse
-open("p32ab.txt", "w") do io
+open("p32.txt", "w") do io
     write(io, "mean $m\n")
     write(io, "standard error $se\n")
     write(io, "95% confidence interval $interval\n")
 end
 histogram(uₓ₆, legend = false, xlabel = L"u(x=0.6)", title = L"n=%$trial")
 savefig("p32ab.svg")
+
+β = FYs \ uₓ₆ # linear regression for control variate
+rand!(dF, @view FYs[:, 1])
+rand!(dY, @view FYs[:, 2:5])
+for i in 1:trial
+    sol = diffusioneqn(FYs[i, 1:5]...)
+    uₓ₆[i] = sol(0.6)[1]
+end
+Y_control = FYs * β
+Ym = mean(Y)
+c = -cov(uₓ₆, Y_control) / varm(Y_control, Ym)
+Z = Y_control
+@. Z = uₓ₆ + c * (Y_control - Ym)
+varZ = var(Z)
+varX = var(uₓ₆)
+open("p32.txt", "w") do io
+    write(io, "varX $varX\n")
+    write(io, "varZ $varZ\n")
+end

@@ -2,7 +2,7 @@ using DelimitedFiles: readdlm
 using Distributions: Bernoulli, Binomial
 using Random: rand!
 using Statistics: mean
-using Plots: histogram, savefig, plot, plot!, histogram!
+using Plots: histogram, savefig, plot, plot!, histogram!, vline!
 
 data = readdlm("baseball.txt"; header = true)[1]
 M = size(data, 1)

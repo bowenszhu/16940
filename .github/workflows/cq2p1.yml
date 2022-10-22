@@ -20,12 +20,12 @@ jobs:
           path: p1a.txt
       - uses: actions/upload-artifact@v3
         with:
-          name: seeᴺ-plot
-          path: seeᴺ.svg
+          name: see_N-plot
+          path: see_N.svg
       - uses: actions/upload-artifact@v3
         with:
-          name: seeᴶˢ-plot
-          path: seeᴶˢ.svg
+          name: see_JS-plot
+          path: see_JS.svg
   job2:
     name: comment-plot
     needs: job1
@@ -38,10 +38,10 @@ jobs:
           name: p1a-txt
       - uses: actions/download-artifact@v3
         with:
-          name: seeᴺ-plot
+          name: see_N-plot
       - uses: actions/download-artifact@v3
         with:
-          name: seeᴶˢ-plot
+          name: see_JS-plot
       - name: Add plot to comment
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,6 +49,6 @@ jobs:
           echo problem 1a >> report1.md
           cat p1a.txt >> report1.md
           echo problem 1b >> report1.md
-          cml-publish seeᴺ.svg --md >> report1.md
-          cml-publish seeᴶˢ.svg --md >> report1.md
+          cml asset publish see_N.svg --md >> report1.md
+          cml asset publish see_JS.svg --md >> report1.md
           cml-send-comment report1.md

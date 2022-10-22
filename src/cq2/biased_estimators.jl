@@ -2,7 +2,7 @@ using DelimitedFiles: readdlm
 using Distributions: Bernoulli, Binomial
 using Random: rand!
 using Statistics: mean
-using Plots: histogram, savefig, plot, plot!
+using Plots: histogram, savefig, plot, plot!, histogram!
 
 data = readdlm("baseball.txt"; header = true)[1]
 M = size(data, 1)
@@ -64,3 +64,17 @@ plot(1:M, P, xlabel = "player", ylabel = "empirial bias", label = "Pᵢ real")
 plot!(1:M, p̄ᴺ_player, label = "pᴺ average")
 plot!(1:M, p̄ᴶˢ_player, label = "p̂ᴶˢ average")
 savefig("p1b2.svg")
+
+# (b) (iii)
+plts = []
+for i in 1:M
+    plt = histogram(view(pᴺ, :, i), label = "pᴺ", title = "P[$i] = $(P[i])",
+                    normalize = true, fillalpha = 0.2, titlefont = 40,
+                    legendfont = 40)
+    histogram!(plt, view(p̂ᴶˢ, :, i), label = "p̂ᴶˢ", normalize = true,
+               fillalpha = 0.2)
+    vline!(plt, [P[i]], line = :red, linewidth = 7, label = "Pᵢ")
+    push!(plts, plt)
+end
+plot(plts..., layout = (6, 3), size = (4000, 5000))
+savefig("p1b3.svg")

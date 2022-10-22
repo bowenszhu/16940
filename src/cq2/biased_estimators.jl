@@ -2,7 +2,7 @@ using DelimitedFiles: readdlm
 using Distributions: Bernoulli, Binomial
 using Random: rand!
 using Statistics: mean
-using Plots: histogram, savefig
+using Plots: histogram, savefig, plot, plot!
 
 data = readdlm("baseball.txt"; header = true)[1]
 M = size(data, 1)
@@ -48,3 +48,13 @@ plt_seeᴶˢ = histogram(seeᴶˢ, legend = false,
                       title = "squared estimation error\nJames-Stein estimation")
 savefig(plt_seeᴺ, "see_N.svg")
 savefig(plt_seeᴶˢ, "see_JS.svg")
+
+# (b) (i)
+p̄ᴺ_player = mean(pᴺ; dims = 1)
+mseᴺ = vec(mean(abs2, pᴺ .- p̄ᴺ_player; dims = 1))
+plot(1:M, mseᴺ, label = "vanilla Monte Carlo", xlabel = "player",
+     ylabel = "mean squared error", xticks = 1:M)
+p̄ᴶˢ_player = mean(p̂ᴶˢ; dims = 1)
+mseᴶˢ = vec(mean(abs2, p̂ᴶˢ .- p̄ᴶˢ_player; dims = 1))
+plot!(1:M, mseᴶˢ, label = "James-Stein estimation")
+savefig("p1b1.svg")

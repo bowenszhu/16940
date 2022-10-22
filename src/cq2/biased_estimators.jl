@@ -59,7 +59,7 @@ plot!(1:M, mseᴶˢ, label = "James-Stein estimation")
 savefig("p1b1.svg")
 
 # (b) (ii)
-plot(1:M, P, xlabel = "player", ylabel = "empirial bias", label = "Pᵢ real")
+plot(1:M, P, xlabel = "player", label = "Pᵢ real")
 plot!(1:M, p̄ᴺ_player, label = "pᴺ average")
 plot!(1:M, p̄ᴶˢ_player, label = "p̂ᴶˢ average")
 savefig("p1b2.svg")

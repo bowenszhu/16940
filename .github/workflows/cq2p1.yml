@@ -1,0 +1,54 @@
+name: run-cq2p1
+on: push
+jobs:
+  job1:
+    name: run-script
+    runs-on: ubuntu-latest
+    env:
+      GKSwstype: "100"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: "1.8.2"
+      - uses: julia-actions/julia-buildpkg@v1
+      - name: Run
+        run: julia --project src/cq2/biased_estimators.jl
+      - uses: actions/upload-artifact@v3
+        with:
+          name: p1a-txt
+          path: p1a.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          name: seeᴺ-plot
+          path: seeᴺ.svg
+      - uses: actions/upload-artifact@v3
+        with:
+          name: seeᴶˢ-plot
+          path: seeᴶˢ.svg
+  job2:
+    name: comment-plot
+    needs: job1
+    runs-on: ubuntu-latest
+    container: docker://ghcr.io/iterative/cml:0-dvc2-base1
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: p1a-txt
+      - uses: actions/download-artifact@v3
+        with:
+          name: seeᴺ-plot
+      - uses: actions/download-artifact@v3
+        with:
+          name: seeᴶˢ-plot
+      - name: Add plot to comment
+        env:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo problem 1a >> report1.md
+          cat p1a.txt >> report1.md
+          echo problem 1b >> report1.md
+          cml-publish seeᴺ.svg --md >> report1.md
+          cml-publish seeᴶˢ.svg --md >> report1.md
+          cml-send-comment report1.md

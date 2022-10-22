@@ -30,6 +30,10 @@ jobs:
         with:
           name: p1b1-plot
           path: p1b1.svg
+      - uses: actions/upload-artifact@v3
+        with:
+          name: p1b2-plot
+          path: p1b2.svg
   job2:
     name: comment-plot
     needs: job1
@@ -49,6 +53,9 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: p1b1-plot
+      - uses: actions/download-artifact@v3
+        with:
+          name: p1b2-plot
       - name: Add plot to comment
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -58,6 +65,8 @@ jobs:
           echo problem 1b >> report1.md
           cml asset publish see_N.svg --md >> report1.md
           cml asset publish see_JS.svg --md >> report1.md
-          echo problem 1bi >> report1.md
+          echo problem 1b1 >> report1.md
           cml asset publish p1b1.svg --md >> report1.md
+          echo problem 1b2 >> report1.md
+          cml asset publish p1b2.svg --md >> report1.md
           cml-send-comment report1.md

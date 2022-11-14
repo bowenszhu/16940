@@ -1,4 +1,4 @@
-name: run-proj2p1b
+name: run-proj2p1b2
 on: push
 jobs:
   run-timing:
@@ -12,19 +12,19 @@ jobs:
           version: "1.8.2"
       - uses: julia-actions/julia-buildpkg@v1
       - name: Run
-        run: julia --project src/proj2/p1b.jl
+        run: julia --project src/proj2/p1b2.jl
       - uses: actions/upload-artifact@v3
         with:
-          name: p1bKL-plot
-          path: p1bKL.svg
+          name: p1bKL2-plot
+          path: p1bKL2.svg
       - uses: actions/upload-artifact@v3
         with:
-          name: p1bKLmean-plot
-          path: p1bKLmean.svg
+          name: p1bKLmean2-plot
+          path: p1bKLmean2.svg
       - uses: actions/upload-artifact@v3
         with:
-          name: p1b-txt
-          path: p1b.txt
+          name: p1b2-txt
+          path: p1b2.txt
   comment-plot:
     needs: run-timing
     runs-on: ubuntu-latest
@@ -33,19 +33,19 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
-          name: p1bKL-plot
+          name: p1bKL2-plot
       - uses: actions/download-artifact@v3
         with:
-          name: p1bKLmean-plot
+          name: p1bKLmean2-plot
       - uses: actions/download-artifact@v3
         with:
-          name: p1b-txt
+          name: p1b2-txt
       - name: Add plot to comment
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo proj2 p1b >> report2.md
-          cml asset publish p1bKL.svg --md >> report2.md
-          cml asset publish p1bKLmean.svg --md >> report2.md
-          cat p1b.txt >> report2.md
-          cml-send-comment report2.md
+          echo proj2 p1b2 >> report22.md
+          cml asset publish p1bKL2.svg --md >> report22.md
+          cml asset publish p1bKLmean2.svg --md >> report22.md
+          cat p1b2.txt >> report22.md
+          cml-send-comment report22.md

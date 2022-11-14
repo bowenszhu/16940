@@ -1,6 +1,6 @@
 using FastGaussQuadrature: gausslegendre
 using LinearAlgebra: Symmetric, eigen!
-using Statistics: mean
+using Statistics: mean, cov
 using Plots: plot, plot!, savefig
 using LaTeXStrings: @L_str
 using Distributions: Normal
@@ -52,32 +52,50 @@ function mset_helper!(A, p)
     end
 end
 
-n = 10
-Z = randn(n)
-x, w, λ, ψ, C = nystrom(n)
-sλ = sqrt.(λ)
-psi(ss) = ((c.(ss, x) .* w)' * ψ)' ./ λ
-function yy(xx)
-    ψx = psi(xx)
-    @. ψx *= sλ * Z
-    μy + sum(ψx)
+uKL = Matrix{Float64}(undef, 11, 10)
+for i in axes(uKL, 2)
+    n = 10
+    Z = randn(n)
+    s, w, λ, ψ, C = nystrom(n)
+    sλ = sqrt.(λ)
+    psi(ss) = ((c.(ss, s) .* w)' * ψ)' ./ λ
+    function yy(xx)
+        ψx = psi(xx)
+        @. ψx *= sλ * Z
+        μy + sum(ψx)
+    end
+    dF = Normal(μf, sqrt(σ²f))
+    F = rand(dF)
+    @variables x u(..)
+    D = Differential(x)
+    k(x) = exp(yy(x))
+    # @register_symbolic k(x)
+    deq = [D(k(x) * D(u(x))) ~ -5.0]
+    xₘᵢₙ = 0.0
+    xₘₐₓ = 1.0
+    domain = [x ∈ (xₘᵢₙ, xₘₐₓ)]
+    bcs = [u(xₘₐₓ) ~ uᵣ, k(x) * D(u(xₘᵢₙ)) ~ -F]
+    iv = [x]
+    dv = [u(x)]
+    N = 10
+    dx = (xₘₐₓ - xₘᵢₙ) / N
+    discretization = MOLFiniteDifference([x => dx])
+    pdesys = PDESystem(deq, bcs, domain, iv, dv; name = :elliptic)
+    prob = discretize(pdesys, discretization)
+    sol = solve(prob)
+    uKL[:, i] .= sol[u(x)]
 end
-dF = Normal(μf, sqrt(σ²f))
-F = rand(dF)
-@variables x u(..)
-D = Differential(x)
-k(x) = exp(yy(x))
-@register_symbolic k(x)
-deq = [D(k(x) * D(u(x))) ~ -5.0]
-xₘᵢₙ = 0.0
-xₘₐₓ = 1.0
-domain = [x ∈ (xₘᵢₙ, xₘₐₓ)]
-bcs = [u(xₘₐₓ) ~ uᵣ, k(x) * D(u(xₘᵢₙ)) ~ -F]
-iv = [x]
-dv = [u(x)]
-N = 10
-dx = (xₘₐₓ - xₘᵢₙ) / N
-discretization = MOLFiniteDifference([x => dx])
-pdesys = PDESystem(deq, bcs, domain, iv, dv; name = :elliptic)
-prob = discretize(pdesys, discretization)
-sol = solve(prob)
+
+plot(xlabel = L"x", ylabel = L"u(x,ω)", legend = false)
+for i in axes(uKL,2)
+    plot!(0:0.1:1,@view uKL[:,i])
+end
+savefig("p1bKL.svg")
+μu = vec(mean(uKL; dims = 2))
+plot(0:0.1:1, μu, xlabel = L"x", ylabel = L"E[u(x,ω)]", legend = false)
+savefig("p1bKLmean.svg")
+@show CKL = cov(uKL[1:end-1,:]')
+open("p1b.txt", "w") do io
+    write(io, "covariance\n")
+    write(io, "$CKL\n")
+end

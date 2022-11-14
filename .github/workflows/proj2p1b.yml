@@ -12,11 +12,19 @@ jobs:
           version: "1.8.2"
       - uses: julia-actions/julia-buildpkg@v1
       - name: Run
-        run: julia --project src/proj2/p1.jl
+        run: julia --project src/proj2/p1b.jl
       - uses: actions/upload-artifact@v3
         with:
-          name: p1a-plot
-          path: p1a.svg
+          name: p1bKL-plot
+          path: p1bKL.svg
+      - uses: actions/upload-artifact@v3
+        with:
+          name: p1bKLmean-plot
+          path: p1bKLmean.svg
+      - uses: actions/upload-artifact@v3
+        with:
+          name: p1b-txt
+          path: p1b.txt
   comment-plot:
     needs: run-timing
     runs-on: ubuntu-latest
@@ -25,11 +33,19 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
-          name: p1a-plot
+          name: p1bKL-plot
+      - uses: actions/download-artifact@v3
+        with:
+          name: p1bKLmean-plot
+      - uses: actions/download-artifact@v3
+        with:
+          name: p1b-txt
       - name: Add plot to comment
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo proj2 p1 >> report1.md
-          cml asset publish p1a.svg --md >> report1.md
+          echo proj2 p1b >> report1.md
+          cml asset publish p1bKL.svg --md >> report1.md
+          cml asset publish p1bKLmean.svg --md >> report1.md
+          cat p1b.txt >> report1.md
           cml-send-comment report1.md

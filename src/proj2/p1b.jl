@@ -87,14 +87,14 @@ for i in axes(uKL, 2)
 end
 
 plot(xlabel = L"x", ylabel = L"u(x,ω)", legend = false)
-for i in axes(uKL,2)
-    plot!(0:0.1:1,@view uKL[:,i])
+for i in axes(uKL, 2)
+    plot!(0:0.1:1, @view uKL[:, i])
 end
 savefig("p1bKL.svg")
 μu = vec(mean(uKL; dims = 2))
 plot(0:0.1:1, μu, xlabel = L"x", ylabel = L"E[u(x,ω)]", legend = false)
 savefig("p1bKLmean.svg")
-@show CKL = cov(uKL[1:end-1,:]')
+@show CKL = cov(uKL[1:(end - 1), :]')
 open("p1b.txt", "w") do io
     write(io, "covariance\n")
     write(io, "$CKL\n")

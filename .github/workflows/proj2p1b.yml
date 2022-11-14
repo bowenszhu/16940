@@ -1,4 +1,4 @@
-name: run-proj2p1
+name: run-proj2p1b
 on: push
 jobs:
   run-timing:
